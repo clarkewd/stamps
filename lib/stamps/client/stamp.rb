@@ -53,9 +53,12 @@ module Stamps
           :stamps_transaction_id => stamps_transaction_id
         }
         response = request('TrackShipment', Stamps::Mapping::TrackShipment.new(params))
-        response[:errors].empty? ? response[:track_shipment_response] : response
+        if !response[:errors].empty? || response[:track_shipment_response].nil?
+          response
+        else
+          response[:track_shipment_response][:tracking_events].nil? ? [] : [response[:track_shipment_response][:tracking_events][:tracking_event]].flatten
+        end
       end
-
     end
   end
 end
